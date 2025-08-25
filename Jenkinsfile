@@ -1,8 +1,8 @@
 pipeline {
     agent any
     parameters {
-        booleanParam(name: 'RUN_DEPLOY', defaultValue: true, 
-        description: 'Should we deploy?')
+        booleanParam(name: 'RUN_DEPLOY', defaultValue: true, description: 'Should we deploy?')
+        choice(name: 'ENV', choices: ['dev', 'staging', 'prod'], description: 'Target environment') // ✅ เพิ่ม ENV
     }
     stages {
         stage('Build') {
@@ -26,6 +26,18 @@ pipeline {
                 }
             }
         }
+
+        stage('OS Matrix (Simulated)') {
+            parallel {
+                stage('Linux Sim') {
+                    steps { echo 'Simulating tests on Linux...' }
+                }
+                stage('Windows Sim') {
+                    steps { echo 'Simulating tests on Windows...' }
+                }
+            }
+        }
+
         stage('Test') {
             steps {
                 sh 'echo "All tests passed!" > results.txt'
@@ -34,7 +46,9 @@ pipeline {
         }
         stage('Approval') {
             steps {
-                input "Do you want to proceed with deployment?"
+                timeout(time: 2, unit: 'MINUTES') {
+                    input "Do you want to proceed with deployment to '${params.ENV}'?"
+                }
             }
         }
         stage('Deploy') {
@@ -42,7 +56,7 @@ pipeline {
                 expression { return params.RUN_DEPLOY }
             }
             steps {
-                echo 'Deploying application...'
+                echo "Deploying application to environment: ${params.ENV}"
             }
         }
     }
