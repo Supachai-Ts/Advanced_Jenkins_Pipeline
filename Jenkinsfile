@@ -2,7 +2,7 @@ pipeline {
     agent any
     parameters {
         booleanParam(name: 'RUN_DEPLOY', defaultValue: true, description: 'Should we deploy?')
-        choice(name: 'ENV', choices: ['dev', 'staging', 'prod'], description: 'Target environment') // ✅ เพิ่ม ENV
+        choice(name: 'ENV', choices: ['dev', 'staging', 'prod'], description: 'Target environment') 
     }
     stages {
         stage('Build') {
