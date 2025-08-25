@@ -46,4 +46,15 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            echo 'Pipeline finished successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check logs!'
+        }
+        always {
+            echo 'Pipeline completed (success or failure).'
+        }
+    }
 }
